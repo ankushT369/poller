@@ -1,39 +1,7 @@
-#ifndef DB_H
-#define DB_H
+#ifndef PG_H
+#define PG_H
 
-#include <stddef.h>
-
-#include "harvester.h"
-
-#define MAX_CONN 1000
-
-
-typedef struct statement_stat stmt_st;
-typedef struct db_conn db_conn;
-
-/** 
- * conn_pool defines a pool of database connections. 
- * It contains the total number of connections and an array of 
- * pointers to individual db_conn instances. */
-typedef struct {
-    size_t total_conn;
-    db_conn* conn[MAX_CONN];
-} conn_pool;
-
-
-/** 
- * db_conn defines a single database connection. 
- * It contains the connection ID, host, port, ref 
- * to an associated statement handle and a ref to a harvester obj. */
-struct db_conn {
-    uint32_t id;
-    const char* host;
-    int32_t port;
-
-    stmt_st* st;
-    hvst* hv;
-};
-
+#include "types.h"
 
 /** 
  * statement_stat defines the statistics of a database statement. 
@@ -85,4 +53,5 @@ struct statement_stat {
 };
 
 
-#endif // DB_H
+#endif // PG_H
+
