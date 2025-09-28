@@ -3,12 +3,15 @@
 
 #include "types.h"
 
+
 /** 
+ * LATER THIS COMMENT NEEDS TO CHANGE
+ *
  * statement_stat defines the statistics of a database statement. 
  * It contains the user ID and database ID, a unique query ID, the query text, 
  * and detailed metrics for planning, execution, block usage (shared, local, temp), 
  * as well as I/O timings for reads and writes. */
-struct statement_stat {
+typedef struct {
     uint32_t userid;       // OID of the user who ran the statement
     uint32_t dbid;         // OID of the database where the statement ran
     int64_t queryid;       // Unique hash derived from the parse tree
@@ -50,7 +53,7 @@ struct statement_stat {
     /* Block I/O timings */
     double blk_read_time;
     double blk_write_time;
-};
+} pg_stat;
 
 
 #endif // PG_H
