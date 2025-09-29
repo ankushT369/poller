@@ -35,6 +35,7 @@
 *.i*86
 *.x86_64
 *.hex
+exec
 
 # Debug files
 *.dSYM/
@@ -57,3 +58,6 @@ dkms.conf
 # build directory
 build
 rough
+
+# main.cpp
+src/main.cpp
