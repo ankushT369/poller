@@ -7,7 +7,7 @@ static int pg_init(void* global_ctx) {
 
 
 
-adapter_ops ops = {
+adapter_ops pg_ops = {
     /* Global init/shutdown */
     //int  (*init)(void *global_ctx);
     .init = pg_init,

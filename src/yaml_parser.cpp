@@ -5,7 +5,7 @@
 
 extern "C" {
 
-size_t count_dbs_config_yaml(const char* filename) {
+size_t count_db_config_yaml(const char* filename) {
     YAML::Node config = YAML::LoadFile(filename);
     return config["databases"].IsDefined() ? config["databases"].size() : 0;
 }
@@ -30,7 +30,7 @@ size_t parse_db_config_yaml(const char* filename, db_conn* db_array, int max_dbs
         };
 
         // Helper lambda to get int with default
-        auto get_int = [&](const YAML::Node& node, const char* key, int def) -> int {
+        auto get_int = [&](const YAML::Node& node, const char* key, int def) -> uint16_t {
             if (node[key].IsDefined()) return node[key].as<int>();
             if (default_cfg[key].IsDefined()) return default_cfg[key].as<int>();
             return def;

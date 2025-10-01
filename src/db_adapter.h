@@ -15,11 +15,15 @@ typedef struct adapter_ops adapter_ops;
 typedef enum db_type {
     POSTGRES,
     MYSQL,
-    SQLITE,
     MONGODB,
-    UNKNOWN,
+    LIMIT,
 } db_type;
 
+static const char* db_map[LIMIT] = {
+    "postgres",
+    "mysql",
+    "mongodb",
+};
 
 /** 
  * LATER THIS COMMENT NEED TO CHANGE
@@ -42,25 +46,23 @@ typedef struct {
 
 /** 
  * db_conn defines a single database connection. 
- * It contains the connection ID, host, port, ref 
- * to an associated statement handle, ref to a harvester state
+ * It contains the connection ID, host, port, adapterID,
+ * dbname, user, password(encrypted), uri, harvester instance,
  * ref to a vtable and adapter-private ctx. */
 struct db_conn {
-    db_type type;
-
     uint32_t id;
 
     char name[128];
-    char adapter_name[64];
     char host[128];
-    int32_t port;
+    uint16_t port;
+    uint32_t adapter;
     char dbname[128];
     char user[64];
     char password[128];
-    const char* uri;
+    char uri[512];
 
     /* harvester state */
-    hvst *hv;     
+    hvst hv;     
     /* vtable */
     const adapter_ops *ops; 
     /* adapter-private ctx (PGconn*, mongoc_client_t*, etc.) */
@@ -74,7 +76,7 @@ struct db_conn {
             //mysql_stat* mysql_stmt;
             //mongo_stat* mongo_stmt;
         } db_spec;
-    };
+    } st;
 
     retry_policy policy;
 };
@@ -104,8 +106,12 @@ struct adapter_ops {
     //void (*free_result)(poll_result *r);
 };
 
+
+bool set_uri(db_conn* conn, size_t conn_size);
+
 #ifdef __cplusplus
 }
 #endif
+
 
 #endif // DB_ADAPTER_H
