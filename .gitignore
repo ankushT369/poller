@@ -61,3 +61,6 @@ rough
 
 # main.cpp
 src/main.cpp
+
+# log
+*.log
