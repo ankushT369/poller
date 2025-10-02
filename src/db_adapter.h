@@ -2,7 +2,6 @@
 #define DB_ADAPTER_H
 
 #include "harvester.h"
-#include "pg_adapter.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,13 +12,13 @@ typedef struct adapter_ops adapter_ops;
 
 
 typedef enum db_type {
-    POSTGRES,
-    MYSQL,
-    MONGODB,
-    LIMIT,
+    DB_POSTGRES,
+    DB_MYSQL,
+    DB_MONGODB,
+    DB_LIMIT,
 } db_type;
 
-static const char* db_map[LIMIT] = {
+static const char* db_map[DB_LIMIT] = {
     "postgres",
     "mysql",
     "mongodb",
@@ -44,12 +43,10 @@ typedef struct {
 } retry_policy;
 
 
-/** 
- * db_conn defines a single database connection. 
- * It contains the connection ID, host, port, adapterID,
- * dbname, user, password(encrypted), uri, harvester instance,
- * ref to a vtable and adapter-private ctx. */
-struct db_conn {
+/**
+ *
+ */
+typedef struct {
     uint32_t id;
 
     char name[128];
@@ -61,22 +58,24 @@ struct db_conn {
     char password[128];
     char uri[512];
 
+    retry_policy policy;
+} db_conf; 
+
+
+/** 
+ * db_conn defines a single database connection. 
+ * It contains the connection ID, host, port, adapterID,
+ * dbname, user, password(encrypted), uri, harvester instance,
+ * ref to a vtable and adapter-private ctx. */
+struct db_conn {
+    db_conf config;
+
     /* harvester state */
     hvst hv;     
     /* vtable */
     const adapter_ops *ops; 
     /* adapter-private ctx (PGconn*, mongoc_client_t*, etc.) */
     void *priv;
-
-    struct stmt_st {
-        union {
-            void* generic;
-            /* Test with postgres for now */
-            pg_stat* pg_stmt;
-            //mysql_stat* mysql_stmt;
-            //mongo_stat* mongo_stmt;
-        } db_spec;
-    } st;
 
     retry_policy policy;
 };
@@ -85,12 +84,8 @@ struct db_conn {
 /**
  * Adapter vtable. */
 struct adapter_ops {
-    /* Global init/shutdown */
-    int  (*init)(void *global_ctx);
-    //void (*shutdown)(void);
-
     /* Async connection */
-    //db_conn* (*connect)(const char *uri);
+    int (*connect)(db_conn* conn);
     //void     (*disconnect)(db_conn *c);
 
     /* Get underlying fd (for epoll/kqueue integration(later)) */
@@ -107,7 +102,21 @@ struct adapter_ops {
 };
 
 
-bool set_uri(db_conn* conn, size_t conn_size);
+/* Public API */
+bool db_config_set_uri(db_conf *config);
+//db_conn* db_conn_create(const db_conf *config);
+void db_conn_destroy(db_conn *conn);
+
+/* Adapter registry */
+void adapter_register(db_type type, const adapter_ops *ops);
+const adapter_ops* adapter_get_ops(db_type type);
+
+/* Harvester Settings */
+void hv_set_disconnected(db_conn* conn);
+void hv_set_connected(db_conn* conn);
+void hv_set_ready(db_conn* conn);
+void hv_set_querying(db_conn* conn);
+void hv_set_err(db_conn* conn);
 
 #ifdef __cplusplus
 }

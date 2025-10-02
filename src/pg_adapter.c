@@ -1,31 +1,24 @@
+#include <libpq-fe.h>
+#include <string.h>
+
 #include "db_adapter.h"
 #include "pg_adapter.h"
 
-static int pg_init(void* global_ctx) {
-    return 21; 
+
+/* THIS IS A TESTING IMPLEMENTATION */
+// First, define the actual adapter_ops structure
+static int pg_connect(db_conn* conn) {
+    // TODO: Implement PostgreSQL connection
+    //zlog_info(lg.system, "PostgreSQL connect called for %s", conn->config.name);
+    return 0; // Return 0 for success
 }
 
-
-
-adapter_ops pg_ops = {
-    /* Global init/shutdown */
-    //int  (*init)(void *global_ctx);
-    .init = pg_init,
-    //void (*shutdown)(void);
-
-    /* Async connection */
-    //db_conn* (*connect)(const char *uri);
-    //void     (*disconnect)(db_conn *c);
-
-    /* Get underlying fd (for epoll/kqueue integration(later)) */
-    //int      (*get_fd)(db_conn *c);
-
-    /* Trigger async poll (e.g., send query/stat request) */
-    //int      (*prepare_poll)(db_conn *c);
-
-    /* Consume ready results, returns poll_result (must be freed by core) */
-    //poll_result* (*consume)(db_conn *c);
-
-    /* Free poll_result memory */
-    //void (*free_result)(poll_result *r);
+// Define the actual pg_adapter_ops variable
+const adapter_ops pg_adapter_ops = {
+    .connect = pg_connect,
+    // Add other function pointers as needed
 };
+
+const adapter_ops* get_pg_adapter_ops(void) {
+    return &pg_adapter_ops;
+}

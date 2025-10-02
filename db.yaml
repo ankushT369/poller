@@ -21,14 +21,3 @@ databases:
     db_name: "development"
     user: "dev_user"
     password_env: "DEV_DB_PASSWORD"
-
-  - name: "analytics_mongo"
-    host: "127.0.0.1"
-    port: 27017
-    adapter: 2
-    db_name: "analytics"
-    user: "mongo_user"
-    password_env: "MONGO_DB_PASSWORD"
-    retry:
-      max_attempts: 5
-      interval_seconds: 10

@@ -6,10 +6,13 @@
 /**
  * state enum defines the current state of a connection. */
 typedef enum {
-    IN_QUERY,
-    IN_WAIT,
-    IN_DISCONNECT,
+    CONN_DISCONNECTED,
+    CONN_CONNECTING,
+    CONN_READY,
+    CONN_QUERYING,
+    CONN_ERROR,
 } state;
+
 
 /**
  */
@@ -17,5 +20,7 @@ typedef struct {
     state st;
     uint64_t poll_cnt;
 } hvst;
+
+
 
 #endif // HARVESTER_H

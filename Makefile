@@ -1,10 +1,13 @@
 CC = gcc
 CXX = g++
-CFLAGS = -I./src
-CXXFLAGS = -I./src
+CFLAGS = -I./src -I/usr/include/postgresql
+CXXFLAGS = -I./src -I/usr/include/postgresql
 LDFLAGS = -lyaml-cpp
 ZLFLAGS = -lzlog
 PTFLAGS = -lpthread
+
+# DB flags
+PG = -lpq
 
 SRC_C = src/main.c src/db_adapter.c src/pg_adapter.c src/log_conf.c
 SRC_CPP = src/yaml_parser.cpp
@@ -22,7 +25,7 @@ build/%.o: src/%.cpp | build
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 build/poller: $(OBJ)
-	$(CXX) $^ -o $@ $(LDFLAGS) $(ZLFLAGS) $(PTFLAGS)
+	$(CXX) $^ -o $@ $(LDFLAGS) $(ZLFLAGS) $(PTFLAGS) $(PG)
 
 build:
 	mkdir -p build

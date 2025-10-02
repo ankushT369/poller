@@ -2,7 +2,12 @@
 #define PG_H
 
 #include "types.h"
+#include "db_adapter.h"
 
+/**
+ * postgres adapter operator all the functions will be 
+ * accessed by this instance. */ 
+extern const adapter_ops pg_adapter_ops;
 
 /** 
  * LATER THIS COMMENT NEEDS TO CHANGE
@@ -54,6 +59,8 @@ typedef struct {
     double blk_read_time;
     double blk_write_time;
 } pg_stat;
+
+const adapter_ops* get_pg_adapter_ops(void);
 
 
 #endif // PG_H

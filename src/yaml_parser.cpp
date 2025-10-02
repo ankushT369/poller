@@ -10,7 +10,7 @@ size_t count_db_config_yaml(const char* filename) {
     return config["databases"].IsDefined() ? config["databases"].size() : 0;
 }
 
-size_t parse_db_config_yaml(const char* filename, db_conn* db_array, int max_dbs) {
+size_t parse_db_config_yaml(const char* filename, db_conf* db_array) {
     YAML::Node config = YAML::LoadFile(filename);
 
     // Load default block if it exists
@@ -18,9 +18,7 @@ size_t parse_db_config_yaml(const char* filename, db_conn* db_array, int max_dbs
 
     size_t count = 0;
     for (auto db_node : config["databases"]) {
-        if (count >= max_dbs) break;
-
-        db_conn* db = &db_array[count];
+        db_conf* db = &db_array[count];
 
         // Helper lambda to get string with default
         auto get_str = [&](const YAML::Node& node, const char* key, const char* def) -> const char* {
