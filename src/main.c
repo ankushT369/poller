@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <zlog.h>
 
 #include "log_conf.h"
 #include "pg_adapter.h"
@@ -55,7 +56,7 @@ int main() {
 
     db_conf config[nums_dbs];
     db_conn conn[nums_dbs];
-    memset(conn, 0, sizeof(config));  // Initialize to avoid garbage data
+    memset(config, 0, sizeof(config));  // Initialize to avoid garbage data
     memset(conn, 0, sizeof(conn));    // Initialize to avoid garbage data
     
     size_t conn_cnt = parse_db_config_yaml("db.yaml", config);
@@ -90,15 +91,40 @@ int main() {
             zlog_fini();
             return EXIT_FAILURE;
         }
+
         conn[i].ops = ops;
         hv_set_disconnected(&conn[i]);
-        conn[i].hv.poll_cnt = 0;
+        hv_poll_cnt_init(&conn[i]);
+
+        if (conn[i].ops->connect(&conn[i]) != 0) {
+            if (conn[i].config.adapter == DB_POSTGRES) {
+                zlog_error(lg.postgres, "Failed to connect to %s: %s", config[i].name, conn[i].ops->get_error(&conn[i]));
+                continue;
+            }
+
+            if (conn[i].config.adapter == DB_MYSQL) {
+                zlog_error(lg.mysql, "Failed to connect to %s: %s", config[i].name, conn[i].ops->get_error(&conn[i]));
+                continue;
+            }
+
+            if (conn[i].config.adapter == DB_MONGODB) {
+                zlog_error(lg.mongodb, "Failed to connect to %s: %s", config[i].name, conn[i].ops->get_error(&conn[i]));
+                continue;
+            }
+        }
+
+        if (conn[i].config.adapter == DB_POSTGRES) {
+            zlog_info(lg.postgres, "PostgreSQL connection established: %s", conn[i].config.name);
+        }
+
+        if (conn[i].config.adapter == DB_MYSQL) {
+            zlog_info(lg.mysql, "mysql connection established: %s", conn[i].config.name);
+        }
+
+        if (conn[i].config.adapter == DB_MONGODB) {
+            zlog_info(lg.mongodb, "mongodb connection established: %s", conn[i].config.name);
+        }
     }
-    zlog_info(lg.system, "Database operations initialized successfully");
-
-    /* Initialize database operations with proper error context */
-
-    //zlog_info(lg.system, "Application startup completed successfully");
     
     /* Proper cleanup before exit */
     zlog_fini();

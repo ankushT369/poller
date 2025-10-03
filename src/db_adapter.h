@@ -97,6 +97,8 @@ struct adapter_ops {
     /* Consume ready results, returns poll_result (must be freed by core) */
     //poll_result* (*consume)(db_conn *c);
 
+    /* Utility */
+    const char* (*get_error)(db_conn *conn);
     /* Free poll_result memory */
     //void (*free_result)(poll_result *r);
 };
@@ -117,6 +119,8 @@ void hv_set_connected(db_conn* conn);
 void hv_set_ready(db_conn* conn);
 void hv_set_querying(db_conn* conn);
 void hv_set_err(db_conn* conn);
+void hv_poll_cnt_init(db_conn* conn);
+
 
 #ifdef __cplusplus
 }

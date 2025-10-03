@@ -3,9 +3,9 @@
 #include "db_adapter.h"
 #include "pg_adapter.h"
 
+
 /* Adapter registry */
 static const adapter_ops* adapter_registry[DB_LIMIT] = { NULL };
-
 
 bool db_config_set_uri(db_conf *config) {
     if (!config || strlen(config->host) == 0 || strlen(config->dbname) == 0) {
@@ -29,14 +29,13 @@ bool db_config_set_uri(db_conf *config) {
     return true;
 }
 
-
 void adapter_register(db_type type, const adapter_ops *ops) {
-    if (type < DB_LIMIT)
+    if (type < DB_LIMIT) {
         adapter_registry[type] = ops;
+    }
 }
 
-
- const adapter_ops* adapter_get_ops(db_type type) {
+const adapter_ops* adapter_get_ops(db_type type) {
     if (type < DB_LIMIT) {
         return adapter_registry[type];
     }
@@ -61,4 +60,8 @@ void hv_set_querying(db_conn* conn) {
 
 void hv_set_err(db_conn* conn) {
     conn->hv.st = CONN_ERROR;
+}
+
+void hv_poll_cnt_init(db_conn* conn) {
+    conn->hv.poll_cnt = 0;
 }

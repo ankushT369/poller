@@ -1,23 +1,22 @@
 default: &default
   host: "localhost"
   port: 5432
-  user: "admin"
-  password_env: "DEFAULT_DB_PASSWORD"
+  user: "ankush"
+  password_env: ""
   retry:
     max_attempts: 3
     interval_seconds: 5
 
 databases:
-  - name: "prod_postgres"
+  - name: "local_testdb"
     <<: *default
     adapter: 0
-    db_name: "production"
-    password_env: "PROD_DB_PASSWORD"
+    db_name: "testdb"
 
-  - name: "dev_postgres"
-    <<: *default
-    port: 5433
-    adapter: 0
-    db_name: "development"
-    user: "dev_user"
-    password_env: "DEV_DB_PASSWORD"
+# - name: "dev_postgres"
+#   <<: *default
+#   port: 5433
+#   adapter: 0
+#   db_name: "development"
+#   user: "dev_user"
+#   password_env: "DEV_DB_PASSWORD"

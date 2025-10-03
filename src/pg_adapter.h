@@ -60,8 +60,15 @@ typedef struct {
     double blk_write_time;
 } pg_stat;
 
-const adapter_ops* get_pg_adapter_ops(void);
 
+/* PostgreSQL connection context */
+typedef struct {
+    void *pg_conn;  /* PGconn* */
+    void *pg_result; /* PGresult* for current query */
+    char last_error[256];
+} pg_ctx_t;
+
+const adapter_ops* get_pg_adapter_ops(void);
 
 #endif // PG_H
 
